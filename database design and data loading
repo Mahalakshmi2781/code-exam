@@ -1,0 +1,33 @@
+import sqlite3
+import csv
+
+conn = sqlite3.connect('ecommerce.db')
+cursor = conn.cursor()
+
+with open('products.csv', 'r', encoding='utf-8') as file:
+    reader = csv.DictReader(file)
+    products = [
+        (
+            int(row['id']),
+            row['name'],
+            float(row['cost']) if 'cost' in row and row['cost'] else 0.0, 
+            row['brand'] if row['brand'] else "Unknown",
+            row['category'],
+            float(row['retail_price']) if row['retail_price'] else 0.0,
+            row['department'],
+            row['sku'],
+            int(row['distribution_center_id']) if row['distribution_center_id'] else 0
+        )
+        for row in reader
+    ]
+
+cursor.executemany('''
+INSERT OR IGNORE INTO products
+(id, name, brand, category, retail_price, cost, department, sku, distribution_center)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+''', products)
+
+
+conn.commit()
+print("CSV data loaded successfully.")
+conn.close()
