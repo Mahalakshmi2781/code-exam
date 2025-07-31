@@ -21,13 +21,6 @@ with open('products.csv', 'r', encoding='utf-8') as file:
         for row in reader
     ]
 
-cursor.executemany('''
-INSERT OR IGNORE INTO products
-(id, name, brand, category, retail_price, cost, department, sku, distribution_center)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-''', products)
-
-
 conn.commit()
 print("CSV data loaded successfully.")
 conn.close()
